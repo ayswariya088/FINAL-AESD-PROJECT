@@ -25,8 +25,12 @@ exit(1);
 }
 
 //ioctl call for I2C
-ioctl(file_tmp,I2C_SLAVE, 0x48);
+if(ioctl(file_tmp,I2C_SLAVE, 0x48)<0){
+printf("Error while setting i2c slave device");
+exit(1);
+}
 
+while(1){
 //hold line low for starting communication
 write(file_tmp,0x00,1);
 
@@ -42,7 +46,11 @@ else{
 temp_value=((tmp_data[0]<<4) |(tmp_data[1]>>4))*(0.0625); //converting to celcius
 
 printf("temperature value is %d C\n", temp_value);
+usleep(1000000);
+}
+
 }
 return 0;
 }
+
 
