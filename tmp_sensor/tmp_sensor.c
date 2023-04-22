@@ -12,7 +12,7 @@
  * @return		: RETURN  0 on success
  *
  */
-#define FILE_PATH "etc/tmpdir/tempdata.txt"
+#define FILE_PATH "/etc/tmpdir/tempdata.txt"
 
 int main()
 {
