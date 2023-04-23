@@ -66,7 +66,7 @@ write(file_fd,send_buffer,sizeof(send_buffer));
 usleep(1000000);
 
 }
-close(file_fd)
+close(file_fd);
 }
 return 0;
 }
