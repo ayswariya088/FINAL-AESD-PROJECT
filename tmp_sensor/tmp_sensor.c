@@ -4,7 +4,9 @@
 #include<sys/ioctl.h>
 #include<fcntl.h>
 #include<unistd.h>
+#include<errno.h>
 #include<syslog.h>
+#include<string.h>
 /*
  * @function	: main.c for reading data through i2c bus
  *
@@ -39,6 +41,7 @@ while(1){
 file_fd=open(FILE_PATH,O_WRONLY);
 if(file_fd<0){
 syslog(LOG_ERR,"Error opening tempdata.txt file");
+syslog(LOG_ERR,"%s",strerror(errno));
 }
 //hold line low for starting communication
 write(file_tmp,0x00,1);
