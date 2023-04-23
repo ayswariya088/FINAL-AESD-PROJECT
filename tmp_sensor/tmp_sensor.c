@@ -59,14 +59,14 @@ else{
 temp_value=((tmp_data[0]<<4) |(tmp_data[1]>>4))*(0.0625); //converting to celcius
 
 //printf("temperature value is %d C\n", temp_value);
-char temp_data[2];
-sprintf(temp_data,"%d",temp_value);
-write(file_fd,temp_data,sizeof(temp_data));
+char send_buffer[50];
+sprintf(send_buffer,"Temperature is %d\n",temp_value);
+syslog(LOG_DEBUG,"Temperature is %d",temp_value);
+write(file_fd,send_buffer,sizeof(send_buffer));
 usleep(1000000);
 
-close(file_fd);
 }
-
+close(file_fd)
 }
 return 0;
 }
