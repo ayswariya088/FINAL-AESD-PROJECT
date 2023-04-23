@@ -60,6 +60,7 @@ temp_value=((tmp_data[0]<<4) |(tmp_data[1]>>4))*(0.0625); //converting to celciu
 
 //printf("temperature value is %d C\n", temp_value);
 char send_buffer[50];
+memset(send_buffer,0,sizeof(send_buffer));
 sprintf(send_buffer,"Temperature is %d\n",temp_value);
 syslog(LOG_DEBUG,"Temperature is %d",temp_value);
 write(file_fd,send_buffer,sizeof(send_buffer));
