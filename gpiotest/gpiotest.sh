@@ -1,13 +1,12 @@
 #!/bin/sh
 
-#Reference: https://github.com/joan2937/pigpio/blob/master/EXAMPLES/Shell/GPIOTEST/gpiotest
+# Reference: https://github.com/joan2937/pigpio/blob/master/EXAMPLES/Shell/GPIOTEST/gpiotest
 
 skipped=""
 tested=""
 failed=""
 
-usage()
-{
+usage() {
    cat <<EOF
 This program checks the Pi's (user) gpios.
 The program reads and writes all the gpios.  Make sure NOTHING
@@ -20,30 +19,29 @@ EOF
    read a
 }
 
-restore_mode()
-{
+restore_mode() {
    # $1 gpio
    # $2 mode
 
    case "$2" in
-        0) m="r" ;;
-        1) m="w" ;;
-        2) m="5" ;;
-        3) m="4" ;;
-        4) m="0" ;;
-        5) m="1" ;;
-        6) m="2" ;;
-        7) m="3" ;;
-        *)
-           echo "invalid mode $2 for gpio $1"
-           exit 1
+   0) m="r" ;;
+   1) m="w" ;;
+   2) m="5" ;;
+   3) m="4" ;;
+   4) m="0" ;;
+   5) m="1" ;;
+   6) m="2" ;;
+   7) m="3" ;;
+   *)
+      echo "invalid mode $2 for gpio $1"
+      exit 1
+      ;;
    esac
 
-   $(pigs m $1 $m)
+   pigs m $1 $m
 }
 
-check_gpio()
-{
+check_gpio() {
    # $1 gpio
    # $2 i2c
 
@@ -52,49 +50,59 @@ check_gpio()
 
    s=$(pigs m $1 w)
 
-   if [ $s  = "" ]
-   then
+   if [ "$s" = "" ]; then
       f=0
       tested+="$1 "
 
       # write mode tests
-      $(pigs w $1 0)
+      pigs w $1 0
       r=$(pigs r $1)
-      if [ $r -ne 0 ]; then f=1; echo "Write 0 to gpio $1 failed."; fi
-
-      $(pigs w $1 1)
-      r=$(pigs r $1)
-      if [$r -ne 1 ]; then f=1; echo "Write 1 to gpio $1 failed."; fi
-
-      # read mode tests using pull-ups and pull-downs
-      $(pigs m $1 r)
-
-      if [$2 -eq 0 ]
-      then
-         $(pigs pud $1 d)
-         r=$(pigs r $1)
-         if [ $r -ne 0 ]; then f=1; echo "Pull down on gpio $1 failed."; fi
+      if [ $r -ne 0 ]; then
+         f=1
+         echo "Write 0 to gpio $1 failed."
       fi
 
-      $(pigs pud $1 u)
+      pigs w $1 1
       r=$(pigs r $1)
-      if [ $r -ne 1 ]; then f=1; echo "Pull up on gpio $1 failed."; fi
+      if [ $r -ne 1 ]; then
+         f=1
+         echo "Write 1 to gpio $1 failed."
+      fi
 
-      $(pigs pud $1 o)   # switch pull-ups/downs off
-      $(pigs w $1 $L)    # restore original level
+      # read mode tests using pull-ups and pull-downs
+      pigs m $1 r
+
+      if [ $2 -eq 0 ]; then
+         pigs pud $1 d
+         r=$(pigs r $1)
+         if [ $r -ne 0 ]; then
+            f=1
+            echo "Pull down on gpio $1 failed."
+         fi
+      fi
+
+      pigs pud $1 u
+      r=$(pigs r $1)
+      if [ $r -ne 1 ]; then
+         f=1
+         echo "Pull up on gpio $1 failed."
+      fi
+
+      pigs pud $1 o      # switch pull-ups/downs off
+      pigs w $1 $L       # restore original level
       restore_mode $1 $m # restore original mode
 
       if [ $f -ne 0 ]; then failed+="$1 "; fi
    else
       skipped+="$1 "
    fi
-}  2>/dev/null
+} 2>/dev/null
 
 usage
 
 v=$(pigs hwver)
 
-if [$v < 0 ]
+if [ $v < 0 ]
 then
    echo "The pigpio daemon wasn't found.  Did you sudo pigpiod?"
    exit
@@ -102,40 +110,42 @@ fi
 
 echo "Testing..."
 i=0
-while [ $i -lt 4 ]; do 
-check_gpio $i 1
-i=$(( i + 1 ))
+while [ $i -lt 4 ]; do
+   check_gpio $i 1
+   i=$((i + 1))
 done
 i=4
-while [ $i -lt 16]; do 
-check_gpio $i 0
-i=$(( i + 1 ))
+while [ $i -lt 16 ]; do
+   check_gpio $i 0
+   i=$((i + 1))
 done
 
-if [ $v -ge 16 ]
-then
+if [ $v -ge 16 ]; then
    check_gpio 16 0
 else
    skipped+="16 "
 fi
+
 i=17
-while [ $i -lt 28]; do 
-check_gpio $i 0
-i=$(( i + 1 ))
-done
-i=28
-while [ $i -lt 30]; do 
-check_gpio $i 1
-i=$(( i + 1 ))
-done
-i=30
-while [ $i -lt 32]; do 
-check_gpio $i 0
-i=$(( i + 1 ))
+while [ $i -lt 28]; do
+   check_gpio $i 0
+   i=$((i + 1))
 done
 
-if [ $failed = "" ]
-then failed="None"
+i=28
+while [ $i -lt 30]; do
+   check_gpio $i 1
+   i=$((i + 1))
+done
+
+i=30
+while [ $i -lt 32]; do
+   check_gpio $i 0
+   i=$((i + 1))
+done
+
+if [ $failed = "" ]; then
+   failed="None"
 fi
 
 echo "Skipped non-user gpios: $skipped"
