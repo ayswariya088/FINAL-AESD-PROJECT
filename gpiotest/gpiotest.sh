@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #Reference: https://github.com/joan2937/pigpio/blob/master/EXAMPLES/Shell/GPIOTEST/gpiotest
 
