@@ -29,7 +29,7 @@
 #define SLAVE_ADDR (0x48)
 #define BUFFER_SIZE (50)
 #define LOW (0x00)
-#define GPIO_PIN (5)
+#define GPIO_PIN (26)
 
 int main()
 {
@@ -113,7 +113,7 @@ int main()
             // tmp_sensor value is of 12 bits with  1st byte MSB and 2nd byte only the  d[7] to d[4] are part of the tmp reading
             temp_value = ((tmp_data[0] << 4) | (tmp_data[1] >> 4)) * (0.0625); // converting to celcius
 
-            if ((temp_value > 20) && (flag == 0))
+            if ((temp_value >=25) && (flag == 0))
             {
                 err = gpiod_line_set_value(line_ptr, 1);
                 if (err < 0)
@@ -127,7 +127,7 @@ int main()
                 syslog(LOG_DEBUG, "GPIO is turned on ");
                 sleep(1);
             }
-            else if ((temp_value < 20) && (flag == 1))
+            else if ((temp_value < 25) && (flag == 1))
             {
                 err = gpiod_line_set_value(line_ptr, 0);
                 if (err < 0)
