@@ -151,7 +151,8 @@ int main()
             sleep(1);
         }
         close(file_fd);
-        gpiod_chip_close(chip);
+        
     }
+    gpiod_chip_close(chip);
     return 0;
 }
