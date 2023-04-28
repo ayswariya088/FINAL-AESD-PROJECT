@@ -38,7 +38,7 @@ int main()
     struct gpiod_chip *chip; // struct for getting chip number and line number
     struct gpiod_line *line_ptr;
     int err;
-    int flag=0; //flag to set that LED on
+    int flag = 0; // flag to set that LED on
     chip = gpiod_chip_open("/dev/gpiochip0");
 
     if (!chip)
@@ -52,6 +52,14 @@ int main()
     if (!line_ptr)
     {
         syslog(LOG_ERR, "Error while setting GPIO Line with offset");
+        gpiod_chip_close(chip);
+        return -1;
+    }
+    err = gpiod_line_request_output(line_ptr, "led_testing", 0);
+
+    if (err < 0)
+    {
+        syslog(LOG_ERR, "Error while setting the output for GPIO");
         gpiod_chip_close(chip);
         return -1;
     }
@@ -105,7 +113,7 @@ int main()
             // tmp_sensor value is of 12 bits with  1st byte MSB and 2nd byte only the  d[7] to d[4] are part of the tmp reading
             temp_value = ((tmp_data[0] << 4) | (tmp_data[1] >> 4)) * (0.0625); // converting to celcius
 
-            if ((temp_value > 20) && (flag==0))
+            if ((temp_value > 20) && (flag == 0))
             {
                 err = gpiod_line_set_value(line_ptr, 1);
                 if (err < 0)
@@ -114,12 +122,12 @@ int main()
                     gpiod_chip_close(chip);
                     return -1;
                 }
-                flag=1;
+                flag = 1;
                 printf("GPIO%d is turned on \n", GPIO_PIN);
                 syslog(LOG_DEBUG, "GPIO is turned on ");
                 sleep(1);
             }
-            else if((temp_value <20) && (flag==1))
+            else if ((temp_value < 20) && (flag == 1))
             {
                 err = gpiod_line_set_value(line_ptr, 0);
                 if (err < 0)
@@ -128,7 +136,7 @@ int main()
                     gpiod_chip_close(chip);
                     return -1;
                 }
-                flag=0;
+                flag = 0;
                 printf("GPIO%d is turned off \n", GPIO_PIN);
                 syslog(LOG_DEBUG, "GPIO is turned off ");
                 sleep(1);
@@ -141,7 +149,6 @@ int main()
             write(file_fd, send_buffer, sizeof(send_buffer));
 
             sleep(1);
-            
         }
         close(file_fd);
         gpiod_chip_close(chip);
