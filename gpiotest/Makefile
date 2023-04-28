@@ -1,12 +1,23 @@
+ifeq ($(CC),)
+	CC=$(CROSS_COMPILE)gcc
+endif
+
+ifeq ($(CFLAGS),)
+	CFLAGS= -g -Wall -Werror
+endif
+
+ifeq ($(LIBS),)
+	LIBS= -lgpiod -pthread
+endif
+
 all: gpio_led
+default: gpio_led
 
-CROSS_COMPILE = 
-CC ?= $(CROSS_COMPILE)gcc
+gpio_led :gpio_led.o
+	$(CROSS_COMPILE)$(CC) $(CFLAGS) -o gpio_led gpio_led.o $(LIBS)
 
-LDFLAGS?= -lpthread -lrt -lgpiod
+gpio_led.o : gpio_led.c
+	$(CROSS_COMPILE)$(CC) $(CFLAGS) -c gpio_led.c $(LIBS)
 
-gpio_led: gpio_led.c
-	$(CC) gpio_led.c -Wall -Werror -g -o gpio_led $(LDFLAGS)
-
-clean:
-	rm -rf *.o gpio_led
+clean :
+	rm -f gpio_led *.o
