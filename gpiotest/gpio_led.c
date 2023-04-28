@@ -48,7 +48,7 @@ int main()
         gpiod_chip_close(chip);
         return -1;
     }
-
+    
     err = gpiod_line_set_value(line_ptr, 1);
     if (err < 0)
     {
