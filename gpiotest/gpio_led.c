@@ -17,58 +17,58 @@
 
 #define GPIO_PIN (5)
 
-struct gpiod_chip *chip; //struct for getting chip number and line number
+struct gpiod_chip *chip; // struct for getting chip number and line number
 struct gpiod_line *line_ptr;
 int err;
 
 int main()
 {
-    chip= gpiod_chip_open("/dev/gpiochip0");
+    chip = gpiod_chip_open("/dev/gpiochip0");
 
     if (!chip)
     {
-        syslog(LOG_ERR,"Error while setting gpio device");
+        syslog(LOG_ERR, "Error while setting gpio device");
         return -1;
     }
 
     line_ptr = gpiod_chip_get_line(chip, GPIO_PIN);
 
-    if (!line_ptr) 
+    if (!line_ptr)
     {
-        syslog(LOG_ERR,"Error while setting GPIO Line with offset");
+        syslog(LOG_ERR, "Error while setting GPIO Line with offset");
         gpiod_chip_close(chip);
-        return -1; 
+        return -1;
     }
 
     err = gpiod_line_request_output(line_ptr, "led_testing", 0);
 
-    if (err <0) 
+    if (err < 0)
     {
-        syslog(LOG_ERR,"Error while setting the output for GPIO");
+        syslog(LOG_ERR, "Error while setting the output for GPIO");
         gpiod_chip_close(chip);
         return -1;
     }
 
     err = gpiod_line_set_value(line_ptr, 1);
-    if (err <0) 
+    if (err < 0)
     {
-        syslog(LOG_ERR,"Error while setting the GPIO high");
+        syslog(LOG_ERR, "Error while setting the GPIO high");
         gpiod_chip_close(chip);
         return -1;
     }
     printf("GPIO%d is turned on \n", GPIO_PIN);
-    syslog(LOG_DEBUG,"GPIO is turned on ");
-    sleep(1000000);
+    syslog(LOG_DEBUG, "GPIO is turned on ");
+    sleep(2);
     err = gpiod_line_set_value(line_ptr, 0);
-    if (err <0) 
+    if (err < 0)
     {
-        syslog(LOG_ERR,"Error while setting the GPIO low");
+        syslog(LOG_ERR, "Error while setting the GPIO low");
         gpiod_chip_close(chip);
         return -1;
     }
     printf("GPIO%d is turned off \n", GPIO_PIN);
-    syslog(LOG_DEBUG,"GPIO is turned off ");
-    sleep(1000000);
+    syslog(LOG_DEBUG, "GPIO is turned off ");
+    sleep(1);
 
     gpiod_chip_close(chip);
 
