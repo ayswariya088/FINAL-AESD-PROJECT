@@ -144,7 +144,7 @@ int main()
             // printf("temperature value is %d C\n", temp_value);
             char send_buffer[BUFFER_SIZE];
             memset(&send_buffer[0], 0, sizeof(send_buffer));
-            sprintf(send_buffer, "Temperature is %d Deg C\n", temp_value);
+            sprintf(send_buffer, "Temperature is %d Deg C\n\r", temp_value);
             syslog(LOG_DEBUG, "Temperature is %d Deg C ", temp_value);
             write(file_fd, send_buffer, sizeof(send_buffer));
 
