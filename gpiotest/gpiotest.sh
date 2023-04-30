@@ -120,24 +120,24 @@ else
 fi
 
 i=17
-while [ $i -lt 28]; do
+while [ $i -lt 28 ]; do
    check_gpio $i 0
    i=$((i + 1))
 done
 
 i=28
-while [ $i -lt 30]; do
+while [ $i -lt 30 ]; do
    check_gpio $i 1
    i=$((i + 1))
 done
 
 i=30
-while [ $i -lt 32]; do
+while [ $i -lt 32 ]; do
    check_gpio $i 0
    i=$((i + 1))
 done
 
-if [ $failed = "" ]; then
+if [ "$failed" = "" ]; then
    failed="None"
 fi
 
