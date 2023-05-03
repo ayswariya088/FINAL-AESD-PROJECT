@@ -113,7 +113,7 @@ int main()
             // tmp_sensor value is of 12 bits with  1st byte MSB and 2nd byte only the  d[7] to d[4] are part of the tmp reading
             temp_value = ((tmp_data[0] << 4) | (tmp_data[1] >> 4)) * (0.0625); // converting to celcius
 
-            if ((temp_value >=20) && (flag == 0))
+            if ((temp_value >=25) && (flag == 0))
             {
                 err = gpiod_line_set_value(line_ptr, 1);
                 if (err < 0)
